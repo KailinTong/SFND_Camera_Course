@@ -61,6 +61,13 @@ void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPo
     TTC = -dT / (1 - meanDistRatio);
 
     // TODO: STUDENT TASK (replacement for meanDistRatio)
+    double medianDistRatio;
+    if(distRatios.size() % 2 == 0)
+        medianDistRatio = (distRatios.at(distRatios.size() / 2 - 1) +  distRatios.at(distRatios.size() / 2 )) * 0.5;
+    else
+        medianDistRatio = distRatios.at( uint (distRatios.size() / 2));
+    TTC = -dT / (1 - medianDistRatio);
+
 }
 
 int main()
