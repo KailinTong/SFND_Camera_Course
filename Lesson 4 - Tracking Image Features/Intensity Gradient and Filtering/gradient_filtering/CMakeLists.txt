@@ -22,3 +22,6 @@ target_link_libraries (gradient_sobel ${OpenCV_LIBRARIES})
 
 add_executable (magnitude_sobel src/magnitude_sobel.cpp)
 target_link_libraries (magnitude_sobel ${OpenCV_LIBRARIES})
+
+add_executable (my_magnitude_sobel src/my_magnitude_sobel.cpp)
+target_link_libraries (my_magnitude_sobel ${OpenCV_LIBRARIES})

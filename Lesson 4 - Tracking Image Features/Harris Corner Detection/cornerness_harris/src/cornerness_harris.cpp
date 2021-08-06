@@ -38,6 +38,45 @@ void cornernessHarris()
     // each maximum. The resulting coordinates shall be stored in a list of keypoints 
     // of the type `vector<cv::KeyPoint>`.
 
+    vector<cv::KeyPoint> keyPoints;
+
+    for(int r = 0; r < dst_norm.rows; r++){
+        for(int c = 0; c < dst_norm.cols; c++){
+            auto response = dst_norm.at<int>(r, c);
+            if(response > minResponse){
+                cv::KeyPoint newKeyPoint{float(r), float(c), float(2 * apertureSize), -1, float(response)};
+
+                bool bOverlap = false;
+
+                for(auto & keyPoint : keyPoints){
+                    double kptOverlap = cv::KeyPoint::overlap(newKeyPoint, keyPoint); // check point overlapping
+
+                    if(kptOverlap > 0){ // overlapped
+                        bOverlap = true;
+                        if(newKeyPoint.response > keyPoint.response){ // check if the new key point response larger than the overlapped
+                            keyPoint = newKeyPoint; // here it is a reference
+                            break; // only replaces one keyPoint so there is no overlapped point
+                        }
+                    }
+
+                }
+                if(!bOverlap)
+                    keyPoints.emplace_back(newKeyPoint);
+
+            }
+        } // eof loop over cols
+    } // eof loop over rows
+    cout << "Key point size is: " << keyPoints.size() << endl;
+    // visualize keypoints
+    windowName = "Harris Corner Detection Results";
+    cv::namedWindow(windowName, 5);
+    cv::Mat visImage = dst_norm_scaled.clone();
+    cv::drawKeypoints(dst_norm_scaled, keyPoints, visImage, cv::Scalar::all(-1), cv::DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+    cv::imshow(windowName, visImage);
+    cv::waitKey(0);
+    cv::imwrite("01.png", visImage);
+
+
 }
 
 int main()

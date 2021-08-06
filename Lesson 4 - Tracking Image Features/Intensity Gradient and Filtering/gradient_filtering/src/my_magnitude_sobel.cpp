@@ -17,10 +17,22 @@ void magnitudeSobel()
     cv::cvtColor(img, imgGray, cv::COLOR_BGR2GRAY);
 
     // apply smoothing
-    cv::Mat blurred = imgGray.clone();
-    int filterSize = 5;
-    int stdDev = 2.0;
-    cv::GaussianBlur(imgGray, blurred, cv::Size(filterSize, filterSize), stdDev);
+    // create filter kernel
+    float gauss_data[25] = {1, 4, 7, 4, 1,
+                            4, 16, 26, 16, 4,
+                            7, 26, 41, 26, 7,
+                            4, 16, 26, 16, 4,
+                            1, 4, 7, 4, 1};
+
+    float sum = accumulate(gauss_data, gauss_data + 25, 0);
+    cout << sum << endl;
+
+    cv::Mat kernel = cv::Mat(5, 5, CV_32F, gauss_data) / sum; // Performs a normalized box filter
+
+    // apply filter
+    cv::Mat blurred;
+    cv::filter2D(imgGray, blurred, -1, kernel, cv::Point(-1, -1), 0, cv::BORDER_DEFAULT);
+
 
     // create filter kernels
     float sobel_x[9] = {-1, 0, +1, -2, 0, +2, -1, 0, +1};

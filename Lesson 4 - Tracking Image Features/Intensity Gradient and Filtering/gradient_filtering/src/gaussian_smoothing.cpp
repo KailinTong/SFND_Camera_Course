@@ -18,7 +18,11 @@ void gaussianSmoothing1()
                             7, 26, 41, 26, 7,
                             4, 16, 26, 16, 4,
                             1, 4, 7, 4, 1};
-    cv::Mat kernel = cv::Mat(5, 5, CV_32F, gauss_data);
+
+    float sum = accumulate(gauss_data, gauss_data + 25, 0);
+    cout << sum << endl;
+
+    cv::Mat kernel = cv::Mat(5, 5, CV_32F, gauss_data) / sum; // Performs a normalized box filter
 
     // apply filter
     cv::Mat result;
