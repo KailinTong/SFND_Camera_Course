@@ -42,24 +42,26 @@ void cornernessHarris()
 
     for(int r = 0; r < dst_norm.rows; r++){
         for(int c = 0; c < dst_norm.cols; c++){
-            auto response = dst_norm.at<int>(r, c);
+            auto response =  static_cast<int>(dst_norm.at<float>(r, c));
             if(response > minResponse){
-                cv::KeyPoint newKeyPoint{float(r), float(c), float(2 * apertureSize), -1, float(response)};
+                cv::KeyPoint newKeyPoint{float(c), float(r), float(2 * apertureSize), -1, float(response)};
 
                 bool bOverlap = false;
 
-                for(auto & keyPoint : keyPoints){
-                    double kptOverlap = cv::KeyPoint::overlap(newKeyPoint, keyPoint); // check point overlapping
+//                for(auto & keyPoint : keyPoints){
+//                    double kptOverlap = cv::KeyPoint::overlap(newKeyPoint, keyPoint); // check point overlapping
+//
+//                    if(kptOverlap > 0){ // overlapped
+//                        bOverlap = true;
+//                        if(newKeyPoint.response > keyPoint.response){ // check if the new key point response larger than the overlapped
+//                            keyPoint = newKeyPoint; // here it is a reference
+//                            break; // only replaces one keyPoint so there is no overlapped point
+//                        }
+//                    }
+//
+//                }
 
-                    if(kptOverlap > 0){ // overlapped
-                        bOverlap = true;
-                        if(newKeyPoint.response > keyPoint.response){ // check if the new key point response larger than the overlapped
-                            keyPoint = newKeyPoint; // here it is a reference
-                            break; // only replaces one keyPoint so there is no overlapped point
-                        }
-                    }
 
-                }
                 if(!bOverlap)
                     keyPoints.emplace_back(newKeyPoint);
 
