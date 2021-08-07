@@ -48,18 +48,18 @@ void cornernessHarris()
 
                 bool bOverlap = false;
 
-//                for(auto & keyPoint : keyPoints){
-//                    double kptOverlap = cv::KeyPoint::overlap(newKeyPoint, keyPoint); // check point overlapping
-//
-//                    if(kptOverlap > 0){ // overlapped
-//                        bOverlap = true;
-//                        if(newKeyPoint.response > keyPoint.response){ // check if the new key point response larger than the overlapped
-//                            keyPoint = newKeyPoint; // here it is a reference
-//                            break; // only replaces one keyPoint so there is no overlapped point
-//                        }
-//                    }
-//
-//                }
+                for(auto & keyPoint : keyPoints){
+                    double kptOverlap = cv::KeyPoint::overlap(newKeyPoint, keyPoint); // check point overlapping
+
+                    if(kptOverlap > 0){ // overlapped
+                        bOverlap = true;
+                        if(newKeyPoint.response > keyPoint.response){ // check if the new key point response larger than the overlapped
+                            keyPoint = newKeyPoint; // here it is a reference
+                            break; // only replaces one keyPoint so there is no overlapped point
+                        }
+                    }
+
+                }
 
 
                 if(!bOverlap)
