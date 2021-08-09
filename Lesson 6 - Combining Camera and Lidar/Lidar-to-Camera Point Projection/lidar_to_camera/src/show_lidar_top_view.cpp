@@ -28,9 +28,15 @@ void showLidarTopview()
         int y = (-xw * imageSize.height / worldSize.height) + imageSize.height;
         int x = (-yw * imageSize.width / worldSize.width) + imageSize.width / 2;
 
+        float zw = (*it).z;
+        if(zw > -1.40){
+            int r = min(255, int(255 * (1 - xw / 20)));
+            int g = min(255, int(255 *  xw / 20));
 
-        cv::circle(topviewImg, cv::Point(x, y), 5, cv::Scalar(0, 0, 255), -1);
-        
+            cv::circle(topviewImg, cv::Point(x, y), 5, cv::Scalar(0, g, r), -1); // b g r
+        }
+
+
         // TODO: 
         // 1. Change the color of the Lidar points such that 
         // X=0.0m corresponds to red while X=20.0m is shown as green.
@@ -52,6 +58,7 @@ void showLidarTopview()
     cv::namedWindow(windowName, 2);
     cv::imshow(windowName, topviewImg);
     cv::waitKey(0); // wait for key to be pressed
+    imwrite("../topviewImg.png", topviewImg);
 }
 
 int main()
