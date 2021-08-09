@@ -133,15 +133,10 @@ Implemented distance ratio to filter points for KNN.
 | **SIFT**            | NaN   | 86   | 64   | 64   | NaN  | -  |
 
 
-#### **MP9:  Processing Time**
+#### **MP9:  Processing Time and Top Three Detector/Descriptor Combinations **
 <img src="time.jpg" width="820" height="1200" />
 
 
-
-#### **Top Three Detector/Descriptor Combinations:**
-
-The recommended 3 top detector/describer combination is: FAST+ BRIEF,  FAST+ORB and FAST+BRISK, 
-as they have less time costs for keypoints detection and descriptor extractor and provide higher number of matched points.
 
 Reference Readme Template:
 https://github.com/danielkelshaw/SensorFusionND/edit/main/p2-feature-tracking/README.md
