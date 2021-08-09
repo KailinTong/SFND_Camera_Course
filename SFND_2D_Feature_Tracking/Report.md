@@ -133,7 +133,7 @@ Implemented distance ratio to filter points for KNN.
 | **SIFT**            | NaN   | 86   | 64   | 64   | NaN  | -  |
 
 
-## **MP9:  Processing Time and Top Three Detector/Descriptor Combinations **
+#### **MP9:  Processing Time and Top Three Detector/Descriptor Combinations** 
 <img src="time.jpg" width="820" height="1200" />
 
 
