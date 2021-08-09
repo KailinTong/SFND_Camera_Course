@@ -134,7 +134,7 @@ Implemented distance ratio to filter points for KNN.
 
 
 #### **MP9:  Processing Time**
-<img src="time.jpg" />
+<img src="time.jpg" width="820" height="1200" />
 
 
 
