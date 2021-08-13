@@ -20,7 +20,7 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
         matcher = cv::BFMatcher::create(normType, crossCheck);
     }
     else{
-        if (descSource.type() != CV_32F){
+        if (descSource.type() != CV_32F || descRef.type() != CV_32F){
             descSource.convertTo(descSource, CV_32F);
             descRef.convertTo(descRef, CV_32F);
         }
