@@ -126,6 +126,7 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
     // display image
     string windowName = "3D Objects";
     cv::namedWindow(windowName, cv::WINDOW_NORMAL);
+    cv::resizeWindow(windowName, 960, 960);
     cv::imshow(windowName, topviewImg);
 
     if(bWait)
@@ -159,5 +160,61 @@ void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
 
 void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bbBestMatches, DataFrame &prevFrame, DataFrame &currFrame)
 {
-    // ...
+    // generteate a map from (previous_bouding box id, current_bouding box id) to the counts of matches
+    map<pair<int, int>, int> bb_matches;
+    for(const auto& bbp: prevFrame.boundingBoxes){
+        for(const auto& bbc: currFrame.boundingBoxes){
+            bb_matches.emplace(pair<int, int>(bbp.boxID, bbc.boxID), 0);
+        }
+    }
+
+    for(const auto& match: matches){
+        int queryIdx = match.queryIdx;
+        int trainIdx = match.trainIdx;
+        bool in_prev_bb(false), in_curr_bb(false);
+        int prev_bb_idx(-1), curr_bb_idx(-1); // TODO:  maybe there is a better way?
+
+        for(const auto& bb: prevFrame.boundingBoxes){
+            auto kp = prevFrame.keypoints.at(queryIdx);
+            bb.roi.contains(kp.pt);
+            prev_bb_idx = bb.boxID;
+            in_prev_bb = true;
+            break;
+        }
+
+        for(const auto& bb: currFrame.boundingBoxes){
+            auto kp = currFrame.keypoints.at(queryIdx);
+            bb.roi.contains(kp.pt);
+            curr_bb_idx = bb.boxID;
+            in_curr_bb = true;
+            break;
+        }
+
+        if( in_curr_bb && in_prev_bb){
+            pair<int, int> index_pair{prev_bb_idx, curr_bb_idx};
+            bb_matches[index_pair] = bb_matches[index_pair] + 1;
+        }
+
+        // find the current bouding box with the highest number of matches for each previous bouding boxes
+        for(const auto& bbp: prevFrame.boundingBoxes){
+            prev_bb_idx = bbp.boxID;
+            int max_matches = 0;
+            pair<int, int> max_pair;
+
+            for(const auto& bbc: prevFrame.boundingBoxes){
+                curr_bb_idx = bbc.boxID;
+                pair<int, int> index_pair{prev_bb_idx, curr_bb_idx};
+                if(bb_matches[index_pair] > max_matches){
+                    max_matches = bb_matches[index_pair];
+                    max_pair = index_pair;
+                }
+            }
+
+            if(max_matches > 0) // matches are found between previous bounding box and current bounding box
+                bbBestMatches.emplace(max_pair.first, max_pair.second);
+        }
+
+
+    }
+
 }

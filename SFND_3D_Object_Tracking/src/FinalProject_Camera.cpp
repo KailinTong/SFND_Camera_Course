@@ -129,7 +129,7 @@ int main(int argc, const char *argv[])
         clusterLidarWithROI((dataBuffer.end()-1)->boundingBoxes, (dataBuffer.end() - 1)->lidarPoints, shrinkFactor, P_rect_00, R_rect_00, RT);
 
         // Visualize 3D objects
-        bVis = true;
+        bVis = false;
         if(bVis)
         {
             show3DObjects((dataBuffer.end()-1)->boundingBoxes, cv::Size(4.0, 20.0), cv::Size(2000, 2000), true);
@@ -140,7 +140,6 @@ int main(int argc, const char *argv[])
         
         
         // REMOVE THIS LINE BEFORE PROCEEDING WITH THE FINAL PROJECT
-        continue; // skips directly to the next image without processing what comes beneath
 
         /* DETECT IMAGE KEYPOINTS */
 
@@ -152,13 +151,33 @@ int main(int argc, const char *argv[])
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
         string detectorType = "SHITOMASI";
 
-        if (detectorType.compare("SHITOMASI") == 0)
+        if (detectorType == "SHITOMASI")
         {
             detKeypointsShiTomasi(keypoints, imgGray, false);
         }
-        else
+        else if(detectorType == "HARRIS")
         {
-            //...
+            detKeypointsHarris(keypoints, imgGray, false);
+        }
+        else if(detectorType == "FAST")
+        {
+            detKeypointsFAST(keypoints, imgGray, false);
+        }
+        else if(detectorType == "SIFT")
+        {
+            detKeypointsSIFT(keypoints, imgGray, false);
+        }
+        else if(detectorType == "ORB")
+        {
+            detKeypointsORB(keypoints, imgGray, false);
+        }
+        else if(detectorType == "AKAZE")
+        {
+            detKeypointsAKAZE(keypoints, imgGray, false);
+        }
+        else if(detectorType == "BRISK")
+        {
+            detKeypointsBRISK(keypoints, imgGray, false);
         }
 
         // optional : limit number of keypoints (helpful for debugging and learning)
@@ -199,7 +218,7 @@ int main(int argc, const char *argv[])
             /* MATCH KEYPOINT DESCRIPTORS */
 
             vector<cv::DMatch> matches;
-            string matcherType = "MAT_BF";        // MAT_BF, MAT_FLANN
+            string matcherType = "MAT_FLANN";        // MAT_BF, MAT_FLANN
             string descriptorType = "DES_BINARY"; // DES_BINARY, DES_HOG
             string selectorType = "SEL_NN";       // SEL_NN, SEL_KNN
 
