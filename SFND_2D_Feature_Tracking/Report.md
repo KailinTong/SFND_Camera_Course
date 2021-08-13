@@ -113,10 +113,10 @@ Implemented distance ratio to filter points for KNN.
 | Detector      | Number of Keypoints in ROI |
 | ------------- | -------------------------- |
 | **AKAZE**     | 1351                      |
-| **BRISK**     | -                      |
+| **BRISK**     | 2757                      |
 | **FAST**      | 5063                       |
 | **HARRIS**    | 1836                       |
-| **ORB**       | -                       |
+| **ORB**       | 500                       |
 | **SHITOMASI** | 1370                       |
 | **SIFT**      | 1438                       |
 
@@ -124,13 +124,13 @@ Implemented distance ratio to filter points for KNN.
 
 | Detector\Descriptor | AKAZE | BRIEF | BRISK | FREAK | ORB  | SIFT |
 | ------------------- | ----- | ----- | ----- | ----- | ---- | ---  |
-| **AKAZE**           | - | -  | -  | -  | - | - |
-| **BRISK**           | NaN   | -  | -  | -  | - | - |
-| **FAST**            | NaN   | 320  | 256   | 251   | 306 | - |
-| **HARRIS**          | NaN   | 56   | 18   | 32   | 39  | -  |
-| **ORB**             | NaN   | -   | -   | -   | -  | -  |
-| **SHITOMASI**       | NaN   | 115   | 95   | 90   | 104  | -  |
-| **SIFT**            | NaN   | 86   | 64   | 64   | NaN  | -  |
+| **AKAZE**           | 138 | 141  | 137  | 126  | 130 | 134 |
+| **BRISK**           | NaN   | 138  | 138  | 112  | 97 | 182 |
+| **FAST**            | NaN   | 320  | 256   | 251   | 306 | 72 |
+| **HARRIS**          | NaN   | 56   | 18   | 32   | 39  | 72  |
+| **ORB**             | NaN   | 60   | 37   | 40   | 39  | 67  |
+| **SHITOMASI**       | NaN   | 115   | 95   | 90   | 104  | 112  |
+| **SIFT**            | NaN   | 86   | 64   | 64   | NaN  | 82  |
 
 
 #### **MP9:  Processing Time and Top Three Detector/Descriptor Combinations** 
