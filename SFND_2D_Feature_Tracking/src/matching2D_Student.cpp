@@ -11,15 +11,22 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
     bool crossCheck = false;
     cv::Ptr<cv::DescriptorMatcher> matcher;
 
+
+
     if (matcherType.compare("MAT_BF") == 0)
     {
-        int normType = cv::NORM_HAMMING;
+        int normType = (descriptorType == "DES_BINARY") ? cv::NORM_HAMMING : cv::NORM_L2;
+
         matcher = cv::BFMatcher::create(normType, crossCheck);
     }
-    else if (matcherType.compare("MAT_FLANN") == 0)
-    {
-        matcher = cv::DescriptorMatcher::create(cv::DescriptorMatcher::FLANNBASED);
+    else{
+        if (descSource.type() != CV_32F){
+            descSource.convertTo(descSource, CV_32F);
+            descRef.convertTo(descRef, CV_32F);
+        }
+        matcher = cv::FlannBasedMatcher::create();
     }
+
 
     // perform matching task
     if (selectorType.compare("SEL_NN") == 0)
@@ -39,11 +46,8 @@ void matchDescriptors(std::vector<cv::KeyPoint> &kPtsSource, std::vector<cv::Key
         double minDescDistRatio = 0.8;
         for (auto & knn_match : knn_matches)
         {
-
             if (knn_match[0].distance / knn_match[1].distance < minDescDistRatio )
-            {
                 matches.push_back(knn_match[0]);
-            }
         }
         cout << " (KNN) with n=" << matches.size() << " matches in " << 1000 * t / 1.0 << " ms" << endl;
 
@@ -279,7 +283,7 @@ void detKeypointsORB(vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis) {
 }
 
 void detKeypointsAKAZE(vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis) {
-    auto detector = cv::ORB::create();
+    auto detector = cv::AKAZE::create();
 
     double t = (double)cv::getTickCount();
     detector->detect(img, keypoints);
@@ -296,4 +300,8 @@ void detKeypointsAKAZE(vector<cv::KeyPoint> &keypoints, cv::Mat &img, bool bVis)
         imshow(windowName, visImage);
         cv::waitKey(0);
     }
+}
+
+void detKeypointsModern(vector<cv::KeyPoint> &keypoints, cv::Mat &img, std::string detectorType, bool bVis) {
+
 }
