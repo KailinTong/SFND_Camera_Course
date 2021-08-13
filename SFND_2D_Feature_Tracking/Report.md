@@ -112,7 +112,7 @@ Implemented distance ratio to filter points for KNN.
 
 | Detector      | Number of Keypoints in ROI |
 | ------------- | -------------------------- |
-| **AKAZE**     | -                      |
+| **AKAZE**     | 1351                      |
 | **BRISK**     | -                      |
 | **FAST**      | 5063                       |
 | **HARRIS**    | 1836                       |
@@ -137,6 +137,7 @@ Implemented distance ratio to filter points for KNN.
 <img src="MidTermProject_Summary-1.jpg" width="820" height="1200" />
 
 
+The recommended 3 top detector/describer combination is: FAST+ BRIEF,  FAST+ORB and FAST+BRISK, as they have less time costs for keypoints detection and descriptor extractor and provide higher number of matched points.
 
 Reference Readme Template:
 https://github.com/danielkelshaw/SensorFusionND/edit/main/p2-feature-tracking/README.md
