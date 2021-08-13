@@ -134,7 +134,7 @@ Implemented distance ratio to filter points for KNN.
 
 
 #### **MP9:  Processing Time and Top Three Detector/Descriptor Combinations** 
-<img src="time.jpg" width="820" height="1200" />
+<img src="MidTermProject_Summary-1.jpg" width="820" height="1200" />
 
 
 
