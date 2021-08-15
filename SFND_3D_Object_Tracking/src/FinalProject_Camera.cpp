@@ -20,6 +20,8 @@
 #include "lidarData.hpp"
 #include "camFusion.hpp"
 
+#include <cstdio>
+
 using namespace std;
 
 /* MAIN PROGRAM */
@@ -73,6 +75,15 @@ int main(int argc, const char *argv[])
     int dataBufferSize = 2;       // no. of images which are held in memory (ring buffer) at the same time
     vector<DataFrame> dataBuffer; // list of data frames which are held in memory at the same time
     bool bVis = false;            // visualize results
+
+    // for report
+    int num_ttc = imgEndIndex - imgStartIndex; // imgStepWidth is 1, skp the image 0
+    vector<double> ttcLidarData(num_ttc, NAN);
+    vector<double> ttcCameraData(num_ttc, NAN);
+
+    // variable
+    string detectorType = "SHITOMASI";
+    string descriptorType = "BRISK"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
 
     /* MAIN LOOP OVER ALL IMAGES */
 
@@ -149,7 +160,7 @@ int main(int argc, const char *argv[])
 
         // extract 2D keypoints from current image
         vector<cv::KeyPoint> keypoints; // create empty feature list for current image
-        string detectorType = "SHITOMASI";
+//        string detectorType = "SHITOMASI";
 
         if (detectorType == "SHITOMASI")
         {
@@ -203,7 +214,7 @@ int main(int argc, const char *argv[])
         /* EXTRACT KEYPOINT DESCRIPTORS */
 
         cv::Mat descriptors;
-        string descriptorType = "BRISK"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
+//        string descriptorType = "BRISK"; // BRISK, BRIEF, ORB, FREAK, AKAZE, SIFT
         descKeypoints((dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->cameraImg, descriptors, descriptorType);
 
         // push descriptors for current frame to end of data buffer
@@ -282,8 +293,9 @@ int main(int argc, const char *argv[])
                     //// TASK FP.3 -> assign enclosed keypoint matches to bounding box (implement -> clusterKptMatchesWithROI)
                     //// TASK FP.4 -> compute time-to-collision based on camera (implement -> computeTTCCamera)
                     double ttcCamera;
-                    clusterKptMatchesWithROI(*currBB, (dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->kptMatches);                    
-                    computeTTCCamera((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, currBB->kptMatches, sensorFrameRate, ttcCamera);
+                    clusterKptMatchesWithROI(*currBB, (dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, (dataBuffer.end() - 1)->kptMatches);
+                    if(!currBB->kptMatches.empty())
+                        computeTTCCamera((dataBuffer.end() - 2)->keypoints, (dataBuffer.end() - 1)->keypoints, currBB->kptMatches, sensorFrameRate, ttcCamera);
                     //// EOF STUDENT ASSIGNMENT
 
                     bVis = true;
@@ -304,13 +316,32 @@ int main(int argc, const char *argv[])
                         cv::waitKey(0);
                     }
                     bVis = false;
+                    ttcLidarData.at(imgIndex-1) = ttcLidar;
+                    ttcCameraData.at(imgIndex-1) = ttcCamera;
 
                 } // eof TTC computation
-            } // eof loop over all BB matches            
-
+            } // eof loop over all BB matches
         }
 
     } // eof loop over all images
+    // saving lidar TTC
+    if(std::freopen("lidar_ttc.txt", "w", stdout)) {
+        for(auto ttc: ttcLidarData){
+            std::printf("%.2f\n", ttc); // this is written to lidar_ttc.txt
+        }
+        std::fclose(stdout);
+    }
+    // saving camera TTC
+    string txt_name = detectorType + "_" +descriptorType + ".txt";
+    char arr[txt_name.length() + 1];
+    strcpy(arr, txt_name.c_str());
+
+    if(std::freopen(arr, "w", stdout)) {
+        for(auto ttc: ttcLidarData){
+            std::printf("%.2f\n", ttc); // this is written to lidar_ttc.txt
+        }
+        std::fclose(stdout);
+    }
 
     return 0;
 }

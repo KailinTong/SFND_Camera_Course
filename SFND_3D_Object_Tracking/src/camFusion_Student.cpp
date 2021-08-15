@@ -139,7 +139,13 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
 // associate a given bounding box with the keypoints it contains
 void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, std::vector<cv::DMatch> &kptMatches)
 {
-    // ...
+    for(auto it = kptMatches.begin(); it != kptMatches.end(); it++){
+        auto curr_idx = it->trainIdx;
+        if(boundingBox.roi.contains(kptsCurr.at(curr_idx).pt)){
+            boundingBox.kptMatches.emplace_back(*it);
+        }
+
+    }
 }
 
 
@@ -147,15 +153,151 @@ void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint
 void computeTTCCamera(std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, 
                       std::vector<cv::DMatch> kptMatches, double frameRate, double &TTC, cv::Mat *visImg)
 {
-    // ...
+    // removing outliers by Interquartile Ranges (IQR)
+    vector<cv::KeyPoint> newKptsPrev, newKptsCurr;
+
+    // filtering for previous  key points
+    vector<double> x, y;
+    for(const auto& pt: kptsPrev){
+        x.emplace_back(pt.pt.x);
+        y.emplace_back(pt.pt.y);
+    }
+    pair<double, double> xFence, yFence;
+    setDataFence(x, xFence);
+    setDataFence(y, yFence);
+    for(const auto& pt: kptsPrev){
+        if(isOutliers(pt.pt.x, xFence) || isOutliers(pt.pt.y, yFence))
+            continue;
+        newKptsPrev.emplace_back(pt);
+    }
+
+    // filtering for previous lidar points
+    x.clear(); y.clear();
+    for(const auto& pt: kptsCurr){
+        x.emplace_back(pt.pt.x);
+        y.emplace_back(pt.pt.y);
+    }
+    setDataFence(x, xFence);
+    setDataFence(y, yFence);
+    for(const auto& pt: kptsCurr){
+        if(isOutliers(pt.pt.x, xFence) || isOutliers(pt.pt.y, yFence) )
+            continue;
+        newKptsCurr.emplace_back(pt);
+    }
+
+
+    // compute distance ratios between all matched keypoints
+    vector<double> distRatios; // stores the distance ratios for all keypoints between curr. and prev. frame
+    for (auto it1 = kptMatches.begin(); it1 != kptMatches.end() - 1; ++it1)
+    { // outer keypoint loop
+
+        // get current keypoint and its matched partner in the prev. frame
+        cv::KeyPoint kpOuterCurr = kptsCurr.at(it1->trainIdx);
+        cv::KeyPoint kpOuterPrev = kptsPrev.at(it1->queryIdx);
+
+        for (auto it2 = kptMatches.begin() + 1; it2 != kptMatches.end(); ++it2)
+        { // inner keypoint loop
+
+            double minDist = 100.0; // min. required distance
+
+            // get next keypoint and its matched partner in the prev. frame
+            cv::KeyPoint kpInnerCurr = kptsCurr.at(it2->trainIdx);
+            cv::KeyPoint kpInnerPrev = kptsPrev.at(it2->queryIdx);
+
+            // compute distances and distance ratios
+            double distCurr = cv::norm(kpOuterCurr.pt - kpInnerCurr.pt);
+            double distPrev = cv::norm(kpOuterPrev.pt - kpInnerPrev.pt);
+
+            if (distPrev > std::numeric_limits<double>::epsilon() && distCurr >= minDist)
+            { // avoid division by zero
+
+                double distRatio = distCurr / distPrev;
+                    distRatios.push_back(distRatio);
+            }
+        } // eof inner loop over all matched kpts
+    }     // eof outer loop over all matched kpts
+
+    // only continue if list of distance ratios is not empty
+    if (distRatios.empty())
+    {
+        TTC = NAN;
+        return;
+    }
+
+    // compute camera-based TTC from distance ratios
+//    double meanDistRatio = std::accumulate(distRatios.begin(), distRatios.end(), 0.0) / distRatios.size();
+
+    double dT = 1 / frameRate;
+//    TTC = -dT / (1 - meanDistRatio);
+
+    // TODO: STUDENT TASK (replacement for meanDistRatio)
+    double medianDistRatio;
+    if(distRatios.size() % 2 == 0)
+        medianDistRatio = (distRatios.at(distRatios.size() / 2 - 1) +  distRatios.at(distRatios.size() / 2 )) * 0.5;
+    else
+        medianDistRatio = distRatios.at( uint (distRatios.size() / 2));
+    TTC = -dT / (1 - medianDistRatio);
 }
 
 
 void computeTTCLidar(std::vector<LidarPoint> &lidarPointsPrev,
                      std::vector<LidarPoint> &lidarPointsCurr, double frameRate, double &TTC)
 {
-    // ...
-}
+    // removing outliers by Interquartile Ranges (IQR)
+    vector<LidarPoint> newLidarPointsPrev, newLidarPointsCurr;
+
+    // filtering for previous lidar points
+    vector<double> x, y, z;
+    for(const auto& pt: lidarPointsPrev){
+        x.emplace_back(pt.x);
+        y.emplace_back(pt.y);
+        z.emplace_back(pt.z);
+    }
+    pair<double, double> xFence, yFence, zFence;
+    setDataFence(x, xFence);
+    setDataFence(y, yFence);
+    setDataFence(z, zFence);
+    for(const auto& pt: lidarPointsPrev){
+        if(isOutliers(pt.x, xFence) || isOutliers(pt.y, yFence) || isOutliers(pt.z, zFence))
+            continue;
+        newLidarPointsPrev.emplace_back(pt);
+    }
+
+    // filtering for previous lidar points
+    x.clear(); y.clear(); z.clear();
+    for(const auto& pt: lidarPointsCurr){
+        x.emplace_back(pt.x);
+        y.emplace_back(pt.y);
+        z.emplace_back(pt.z);
+    }
+    setDataFence(x, xFence);
+    setDataFence(y, yFence);
+    setDataFence(z, zFence);
+    for(const auto& pt: lidarPointsCurr){
+        if(isOutliers(pt.x, xFence) || isOutliers(pt.y, yFence) || isOutliers(pt.z, zFence))
+            continue;
+        newLidarPointsCurr.emplace_back(pt);
+    }
+
+
+    // auxiliary variables
+    double dT = 1.0 / frameRate;        // time between two measurements in seconds
+    double laneWidth = 4.0; // assumed width of the ego lane
+
+    // find closest distance to Lidar points within ego lane
+    double minXPrev = 1e9, minXCurr = 1e9;
+    for (auto it = newLidarPointsPrev.begin(); it != newLidarPointsPrev.end(); ++it)
+    {
+        minXPrev = minXPrev > it->x ? it->x : minXPrev;
+    }
+
+    for (auto it = newLidarPointsCurr.begin(); it != newLidarPointsCurr.end(); ++it)
+    {
+        minXCurr = minXCurr > it->x ? it->x : minXCurr;
+    }
+
+    // compute TTC from both measurements
+    TTC = minXCurr * dT / (minXPrev - minXCurr);}
 
 
 void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bbBestMatches, DataFrame &prevFrame, DataFrame &currFrame)
@@ -174,32 +316,29 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
         bool in_prev_bb(false), in_curr_bb(false);
         int prev_bb_idx(-1), curr_bb_idx(-1); // TODO:  maybe there is a better way?
 
-        for(const auto& bb: prevFrame.boundingBoxes){
-            auto kp = prevFrame.keypoints.at(queryIdx);
-            bb.roi.contains(kp.pt);
-            prev_bb_idx = bb.boxID;
-            in_prev_bb = true;
-            break;
+        for(const auto& bbp: prevFrame.boundingBoxes){
+            auto kpp = prevFrame.keypoints.at(queryIdx);
+            prev_bb_idx = bbp.boxID;
+
+            if(bbp.roi.contains(kpp.pt)){
+                for(const auto& bbc: currFrame.boundingBoxes){
+                    auto kpc = currFrame.keypoints.at(trainIdx);
+                    if(bbc.roi.contains(kpc.pt)){
+                        curr_bb_idx = bbc.boxID;
+                        pair<int, int> index_pair{prev_bb_idx, curr_bb_idx};
+                        bb_matches[index_pair] = bb_matches[index_pair] + 1;
+                    }
+                }
+
+            }
         }
 
-        for(const auto& bb: currFrame.boundingBoxes){
-            auto kp = currFrame.keypoints.at(queryIdx);
-            bb.roi.contains(kp.pt);
-            curr_bb_idx = bb.boxID;
-            in_curr_bb = true;
-            break;
-        }
 
-        if( in_curr_bb && in_prev_bb){
-            pair<int, int> index_pair{prev_bb_idx, curr_bb_idx};
-            bb_matches[index_pair] = bb_matches[index_pair] + 1;
-        }
-
-        // find the current bouding box with the highest number of matches for each previous bouding boxes
+        // find the current bounding box with the highest number of matches for each previous bouding boxes
         for(const auto& bbp: prevFrame.boundingBoxes){
             prev_bb_idx = bbp.boxID;
             int max_matches = 0;
-            pair<int, int> max_pair;
+            pair<int, int> max_pair{-1, -1};
 
             for(const auto& bbc: prevFrame.boundingBoxes){
                 curr_bb_idx = bbc.boxID;
@@ -217,4 +356,23 @@ void matchBoundingBoxes(std::vector<cv::DMatch> &matches, std::map<int, int> &bb
 
     }
 
+}
+
+void setDataFence(std::vector<double> data, std::pair<double, double> &fence, double factor) {
+    sort(data.begin(), data.end());
+    double Q1 =  data.at(static_cast<int>(data.size() * 0.25)); // Q1
+    double Q3 =  data.at(static_cast<int>(data.size() * 0.75)); // Q3
+    double IQR = Q3 - Q1 ;
+    fence.first = Q1 - factor * IQR;
+    fence.second = Q3 + factor * IQR;
+    // Ref: https://www.purplemath.com/modules/boxwhisk3.htm
+    // Ref: Zwillinger, D., Kokoska, S. (2000) CRC Standard Probability and Statistics Tables and Formulae, CRC Press. ISBN 1-58488-059-7 page 18.
+
+}
+
+bool isOutliers(double value, std::pair<double, double> fences) {
+    if(value > fences.second || value < fences.first)
+        return true;
+    else
+        return false;
 }
