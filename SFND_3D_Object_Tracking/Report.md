@@ -97,23 +97,23 @@ I created 7 graphs demonstrating the TTC each possible combination of detectors 
 Each graph provides the trend of TTC od one detector along with different descriptors. 
 It is interesting that many TTCs are overlapped even though different descriptors are used.
 
-<img src="images/report_images/SHITOMASI.png" width="779" height="414" />
+<img src="images/report_images/SHITOMASI.png"  />
 
-<img src="images/report_images/HARRIS.png" width="779" height="414" />
+<img src="images/report_images/HARRIS.png"  />
 
-<img src="images/report_images/FAST.png" width="779" height="414" />
+<img src="images/report_images/FAST.png"  />
 
-<img src="images/report_images/BRISK.png" width="779" height="414" />
+<img src="images/report_images/BRISK.png"  />
 
-<img src="images/report_images/ORB.png" width="779" height="414" />
+<img src="images/report_images/ORB.png"  />
 
-<img src="images/report_images/AKAZE.png" width="779" height="414" />
+<img src="images/report_images/AKAZE.png"  />
 
-<img src="images/report_images/SIFT.png" width="779" height="414" />
+<img src="images/report_images/SIFT.png" />
 
 There are still quite a lot of problems in the TTC calculation.
 
 For example, if we look at a matched image in FAST detector + BRISK descriptor, some matched points are not belonging to the precedding car but belonging to the car which is far away but overlapped with precedding car in the image.
 It is also difficult to filter those matched points.
 
-<img src="images/report_images/FAST_BRISK.png" width="779" height="414" />
+<img src="images/report_images/FAST_BRISK.png"  />
