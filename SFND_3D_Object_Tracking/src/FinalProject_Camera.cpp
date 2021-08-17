@@ -195,7 +195,7 @@ int main(int argc, const char *argv[])
         }
 
         // optional : limit number of keypoints (helpful for debugging and learning)
-        bool bLimitKpts = true;
+        bool bLimitKpts = false;
         if (bLimitKpts)
         {
             int maxKeypoints = 50;
