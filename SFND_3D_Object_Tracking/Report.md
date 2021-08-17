@@ -79,10 +79,10 @@ The table below shows the TTC estimate at a particular frame index. I used Shi-T
 |     18      |       8.52             |
 
 
+<img src="images/report_images/4.png" width="779" height="414" />
 
-![Frame 3 Preceding Vehicle Point Cloud](images/report_images/4.png)
+<img src="images/report_images/5.png" width="779" height="414" />
 
-![Frame 4 Preceding Vehicle Point Cloud](images/report_images/5.png)
 
 We pay attention to projected lidar points in frame 4 and 5. 
 Time-to-collision is definded by distance / relaive velocity. It is important to get a precise relative velocity estimation.
@@ -97,23 +97,23 @@ I created 7 graphs demonstrating the TTC each possible combination of detectors 
 Each graph provides the trend of TTC od one detector along with different descriptors. 
 It is interesting that many TTCs are overlapped even though different descriptors are used.
 
-![Shi-Tomasi TTC Results](images/report_images/SHITOMASI.png)
+<img src="images/report_images/SHITOMASI.png" width="779" height="414" />
 
-![Harris TTC Results](images/report_images/HARRIS.png)
+<img src="images/report_images/HARRIS.png" width="779" height="414" />
 
-![FAST TTC Results](images/report_images/FAST.png)
+<img src="images/report_images/FAST.png" width="779" height="414" />
 
-![BRISK TTC Results](images/report_images/BRISK.png)
+<img src="images/report_images/BRISK.png" width="779" height="414" />
 
-![ORB TTC Results](images/report_images/ORB.png)
+<img src="images/report_images/ORB.png" width="779" height="414" />
 
-![AKAZE TTC Results](images/report_images/AKAZE.png)
+<img src="images/report_images/AKAZE.png" width="779" height="414" />
 
-![SIFT TTC Results](images/report_images/SIFT.png)
+<img src="images/report_images/SIFT.png" width="779" height="414" />
 
 There are still quite a lot of problems in the TTC calculation.
 
 For example, if we look at a matched image in FAST detector + BRISK descriptor, some matched points are not belonging to the precedding car but belonging to the car which is far away but overlapped with precedding car in the image.
 It is also difficult to filter those matched points.
 
-![Matching problem](images/report_images/FAST_BRISK.png)
+<img src="images/report_images/FAST_BRISK.png" width="779" height="414" />
