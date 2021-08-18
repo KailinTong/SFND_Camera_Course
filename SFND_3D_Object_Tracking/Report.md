@@ -111,7 +111,8 @@ Each graph provides the trend of TTC od one detector along with different descri
 <img src="images/report_images/SIFT.png" />
 
 
-For example, if we look at a matched image in FAST detector + BRISK descriptor, some matched points are not belonging to the preceding car but belonging to the car which is far away, but overlapped with precedding car in the image.
+For example, if we look at a matched image (image frame 5) of SHITOMASI detector with BRIEF descriptor, some matched points near around the preceding car are not belonging to it
+,but belonging to the car which is far away.
 It is also difficult to filter those erroneous matched points.
 
-<img src="images/report_images/FAST_BRISK.png"  />
+<img src="images/report_images/SHITOMASI+BRIEF+5.png"  />
