@@ -23,7 +23,7 @@ def report_image():
         fig, ax = plt.subplots()
         ax.set(xlabel='image frame index', ylabel='TTC (s)',
                title=detector, )
-        ax.set_ylim(0, 40)
+        ax.set_ylim(0, 50)
         descriptor_list = []
         for descriptor in descriptors:
             txt_name = detector + "_" + descriptor + ".txt"

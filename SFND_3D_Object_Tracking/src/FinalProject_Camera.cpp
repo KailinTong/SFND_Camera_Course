@@ -82,9 +82,9 @@ int main(int argc, const char *argv[])
     vector<double> ttcCameraData(num_ttc, NAN);
 
     // variable
-    string detectorType = "SIFT";         //// -> SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE (only with AKAZE), SIFT (not with ORB)
+    string detectorType = "BRISK";         //// -> SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE (only with AKAZE), SIFT (not with ORB)
 
-    string descriptorType = "SIFT"; //// ->  SIFT, BRIEF, ORB, FREAK, AKAZE(only with AKAZE), SIFT (change to HOG)
+    string descriptorType = "SIFT"; //// ->  BRISK, BRIEF, ORB, FREAK, AKAZE(only with AKAZE), SIFT (change to HOG)
 
     /* MAIN LOOP OVER ALL IMAGES */
 
