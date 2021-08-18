@@ -139,13 +139,33 @@ void show3DObjects(std::vector<BoundingBox> &boundingBoxes, cv::Size worldSize, 
 // associate a given bounding box with the keypoints it contains
 void clusterKptMatchesWithROI(BoundingBox &boundingBox, std::vector<cv::KeyPoint> &kptsPrev, std::vector<cv::KeyPoint> &kptsCurr, std::vector<cv::DMatch> &kptMatches)
 {
-    for(auto it = kptMatches.begin(); it != kptMatches.end(); it++){
-        auto curr_idx = it->trainIdx;
-        if(boundingBox.roi.contains(kptsCurr.at(curr_idx).pt)){
-            boundingBox.kptMatches.emplace_back(*it);
-        }
+    vector<cv::DMatch> filteredMatches;
+    vector<double> d_data;
+    boundingBox.kptMatches.clear();
 
+    // filtered by containing in keypoints
+    for(auto & kptMatch : kptMatches){
+        auto curr_idx = kptMatch.trainIdx;
+        auto prev_idx = kptMatch.queryIdx;
+        if(boundingBox.roi.contains(kptsCurr.at(curr_idx).pt)){
+            double dx = kptsCurr.at(curr_idx).pt.x - kptsPrev.at(prev_idx).pt.x;
+            double dy = kptsCurr.at(curr_idx).pt.y - kptsPrev.at(prev_idx).pt.y;
+            double d = sqrt(dx * dx + dy * dy);
+            d_data.emplace_back(d);
+            filteredMatches.emplace_back(kptMatch);
+        }
     }
+
+    // filtered by IQR
+    pair<double, double> fence;
+    setDataFence(d_data, fence);
+
+    for(auto i = 0; i < filteredMatches.size(); i++){
+        if(!isOutliers(d_data.at(i), fence))
+            boundingBox.kptMatches.emplace_back(filteredMatches.at(i));
+    }
+
+
 }
 
 

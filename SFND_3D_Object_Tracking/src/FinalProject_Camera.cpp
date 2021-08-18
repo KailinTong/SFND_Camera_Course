@@ -82,9 +82,9 @@ int main(int argc, const char *argv[])
     vector<double> ttcCameraData(num_ttc, NAN);
 
     // variable
-    string detectorType = "FAST";         //// -> SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE (only with AKAZE), SIFT (not with ORB)
+    string detectorType = "ORB";         //// -> SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE (only with AKAZE), SIFT (not with ORB)
 
-    string descriptorType = "BRISK"; //// ->  BRISK, BRIEF, ORB, FREAK, AKAZE(only with AKAZE), SIFT (change to HOG)
+    string descriptorType = "ORB"; //// ->  BRISK, BRIEF, ORB, FREAK, AKAZE(only with AKAZE), SIFT (change to HOG)
 
     /* MAIN LOOP OVER ALL IMAGES */
 
@@ -354,19 +354,19 @@ int main(int argc, const char *argv[])
 
     } // eof loop over all images
     // saving lidar TTC
-    if(std::freopen("lidar_ttc.txt", "w", stdout)) {
+    if(std::freopen("../ttc/lidar_ttc.txt", "w", stdout)) {
         for(auto ttc: ttcLidarData){
             std::printf("%.2f\n", ttc); // this is written to lidar_ttc.txt
         }
         std::fclose(stdout);
     }
     // saving camera TTC
-    string txt_name = detectorType + "_" +descriptorType + ".txt";
+    string txt_name = "../ttc/" + detectorType + "_" +descriptorType + ".txt";
     char arr[txt_name.length() + 1];
     strcpy(arr, txt_name.c_str());
 
     if(std::freopen(arr, "w", stdout)) {
-        for(auto ttc: ttcLidarData){
+        for(auto ttc: ttcCameraData){
             std::printf("%.2f\n", ttc); // this is written to lidar_ttc.txt
         }
         std::fclose(stdout);

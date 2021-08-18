@@ -59,7 +59,7 @@ The table below shows the TTC estimate at a particular frame index. I used Shi-T
 
 | Image Index | TTC LiDAR (in seconds) | 
 |:-----------:|:----------------------:|
-|      1      |       nan              |
+|      1      |       12.97              |
 |      2      |       12.26            |
 |      3      |       13.92            |
 |      4      |       14.89            |
