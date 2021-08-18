@@ -111,7 +111,7 @@ Each graph provides the trend of TTC od one detector along with different descri
 <img src="images/report_images/SIFT.png" />
 
 
-For example, if we look at a matched image (image frame 5) of SHITOMASI detector with BRIEF descriptor, some matched points near around the preceding car are not belonging to it
+For example, if we look at a matched image (image frame 5) of SHITOMASI detector with BRIEF descriptor, some matched points around the preceding car are not belonging to it
 ,but belonging to the car which is far away.
 It is also difficult to filter those erroneous matched points.
 

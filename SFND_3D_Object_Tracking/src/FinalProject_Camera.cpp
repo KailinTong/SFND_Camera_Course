@@ -82,9 +82,9 @@ int main(int argc, const char *argv[])
     vector<double> ttcCameraData(num_ttc, NAN);
 
     // variable
-    string detectorType = "BRISK";         //// -> SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE (only with AKAZE), SIFT (not with ORB)
+    string detectorType = "SHITOMASI";         //// -> SHITOMASI, HARRIS, FAST, BRISK, ORB, AKAZE (only with AKAZE), SIFT (not with ORB)
 
-    string descriptorType = "SIFT"; //// ->  BRISK, BRIEF, ORB, FREAK, AKAZE(only with AKAZE), SIFT (change to HOG)
+    string descriptorType = "BRIEF"; //// ->  BRISK, BRIEF, ORB, FREAK, AKAZE(only with AKAZE), SIFT (change to HOG)
 
     /* MAIN LOOP OVER ALL IMAGES */
 
@@ -195,7 +195,7 @@ int main(int argc, const char *argv[])
         }
 
         // optional : limit number of keypoints (helpful for debugging and learning)
-        bool bLimitKpts = false;
+        bool bLimitKpts = true;
         if (bLimitKpts)
         {
             int maxKeypoints = 50;
@@ -248,7 +248,7 @@ int main(int argc, const char *argv[])
             cout << "#7 : MATCH KEYPOINT DESCRIPTORS done" << endl;
 
             // visualize matches between current and previous image
-            bVis = false;
+            bVis = true;
             if (bVis)
             {
                 cv::Mat matchImg = ((dataBuffer.end() - 1)->cameraImg).clone();
