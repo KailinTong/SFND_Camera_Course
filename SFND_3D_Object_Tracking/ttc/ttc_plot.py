@@ -7,7 +7,7 @@ def read_txt(txt_name):
         with open(txt_name) as f:
             for line in f:
                 line_str = line.rstrip("\n")
-                if line_str == "nan":
+                if line_str in ["nan", "-inf", "inf"]:
                     temp_list.append(-100)
                 else:
                     temp_list.append(float(line_str))
@@ -26,7 +26,7 @@ def report_image():
         ax.set_ylim(0, 40)
         descriptor_list = []
         for descriptor in descriptors:
-            txt_name = "ttc/" + detector + "_" + descriptor + ".txt"
+            txt_name = detector + "_" + descriptor + ".txt"
             ttcs = read_txt(txt_name)
 
             if ttcs:
@@ -37,7 +37,7 @@ def report_image():
                 ax.grid()
 
             ax.legend(descriptor_list)
-        fig.savefig(detector + ".png")
+        fig.savefig("../images/report_images/" + detector + ".png")
 
 
 

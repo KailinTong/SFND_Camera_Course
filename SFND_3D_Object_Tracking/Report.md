@@ -89,13 +89,12 @@ Time-to-collision is definded by distance / relaive velocity. It is important to
 In our approach, we use minimal distance of previous and current lidar points to estimate the relative velocity. The lidar sensor is heavily influenced by noises, and the removing outliers might neglect some correct values.
 Using this distance change to estimate relative velocity might be erroneous. Therefore, the TTC calculation might be not plausible.
 
-Secondly, the detector/descriptor influences keypoints match, therefore influences the best match bounding boxes, finally changes the results of lidar TTC calculateion.
+Secondly, the detector/descriptor influences keypoints match, therefore influences the best match bounding boxes, finally might make the results of lidar TTC calculation infeasible.
 
 ## FP.6 - Performance Evaluation 2
 
 I created 7 graphs demonstrating the TTC each possible combination of detectors and descriptors. 
 Each graph provides the trend of TTC od one detector along with different descriptors. 
-It is interesting that many TTCs are overlapped even though different descriptors are used.
 
 <img src="images/report_images/SHITOMASI.png"  />
 
@@ -111,7 +110,6 @@ It is interesting that many TTCs are overlapped even though different descriptor
 
 <img src="images/report_images/SIFT.png" />
 
-There are still quite a lot of problems in the TTC calculation.
 
 For example, if we look at a matched image in FAST detector + BRISK descriptor, some matched points are not belonging to the precedding car but belonging to the car which is far away but overlapped with precedding car in the image.
 It is also difficult to filter those matched points.
